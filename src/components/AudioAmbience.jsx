@@ -3,150 +3,150 @@ import { Volume2, VolumeX, Music } from 'lucide-react';
 
 export default function AudioAmbience({ isMuted, setIsMuted }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioCtxRef = useRef(null);
-  const gainNodeRef = useRef(null);
-  const intervalRef = useRef(null);
+  const audioRef = useRef(null);
+  const fadeIntervalRef = useRef(null);
+  const targetVolume = 0.14; // Soft, elegant luxury volume
 
-  // Initialize Web Audio API ambient classical soundscape
-  const startAmbientMusic = () => {
-    try {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return;
+  // Fade volume helper
+  const fadeVolume = (from, to, duration = 1200, callback) => {
+    if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+    if (!audioRef.current) return;
 
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new AudioContext();
+    const audio = audioRef.current;
+    const steps = 24;
+    const stepTime = duration / steps;
+    const volumeStep = (to - from) / steps;
+    let currentStep = 0;
+
+    audio.volume = Math.max(0, Math.min(1, from));
+
+    fadeIntervalRef.current = setInterval(() => {
+      currentStep++;
+      const newVol = from + volumeStep * currentStep;
+      audio.volume = Math.max(0, Math.min(1, newVol));
+
+      if (currentStep >= steps) {
+        clearInterval(fadeIntervalRef.current);
+        audio.volume = Math.max(0, Math.min(1, to));
+        if (callback) callback();
       }
+    }, stepTime);
+  };
 
-      const ctx = audioCtxRef.current;
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
-
-      if (gainNodeRef.current) {
-        gainNodeRef.current.disconnect();
-      }
-
-      const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(0.001, ctx.currentTime);
-      masterGain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 3);
-      masterGain.connect(ctx.destination);
-      gainNodeRef.current = masterGain;
-
-      // Raag Yaman / Kalyani harmonic drone (Tanpura roots: Sa, Pa, High Sa - 130.81Hz, 196.00Hz, 261.63Hz)
-      const baseFreqs = [130.81, 196.00, 261.63, 392.00];
-      baseFreqs.forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const oscGain = ctx.createGain();
-        osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
-        osc.frequency.setValueAtTime(freq + (Math.random() * 0.4 - 0.2), ctx.currentTime);
-
-        // Gentle tremolo
-        const lfo = ctx.createOscillator();
-        const lfoGain = ctx.createGain();
-        lfo.frequency.value = 0.2 + idx * 0.1;
-        lfoGain.gain.value = 0.03;
-        lfo.connect(lfoGain.gain);
-
-        oscGain.gain.value = 0.12 / (idx + 1);
-        osc.connect(oscGain);
-        oscGain.connect(masterGain);
-        osc.start();
-      });
-
-      // Melodic gentle Santoor / Shehnai harp notes generator
-      const notes = [261.63, 293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 523.25]; // Sa Re Ga Ma# Pa Dha Ni Sa
-      const playChime = () => {
-        if (!audioCtxRef.current || audioCtxRef.current.state !== 'running' || !gainNodeRef.current) return;
-        const note = notes[Math.floor(Math.random() * notes.length)];
-        const chimeOsc = ctx.createOscillator();
-        const chimeGain = ctx.createGain();
-        
-        chimeOsc.type = 'sine';
-        chimeOsc.frequency.setValueAtTime(note, ctx.currentTime);
-        
-        chimeGain.gain.setValueAtTime(0.001, ctx.currentTime);
-        chimeGain.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 0.1);
-        chimeGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 3.5);
-
-        chimeOsc.connect(chimeGain);
-        chimeGain.connect(masterGain);
-
-        chimeOsc.start();
-        chimeOsc.stop(ctx.currentTime + 3.6);
-      };
-
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(playChime, 2200);
-
-      setIsPlaying(true);
-    } catch (e) {
-      console.warn("Audio Context init error", e);
+  const playMusic = () => {
+    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    
+    // Resume audio context/playback smoothly
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsPlaying(true);
+          setIsMuted(false);
+          fadeVolume(audio.volume, targetVolume, 1400);
+        })
+        .catch((err) => {
+          // Autoplay blocked by browser policy until user interaction
+          setIsPlaying(false);
+        });
     }
   };
 
-  const stopAmbientMusic = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (gainNodeRef.current && audioCtxRef.current) {
-      const ctx = audioCtxRef.current;
-      gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, ctx.currentTime);
-      gainNodeRef.current.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
-    }
-    setIsPlaying(false);
+  const pauseMusic = () => {
+    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    fadeVolume(audio.volume, 0, 1000, () => {
+      audio.pause();
+      setIsPlaying(false);
+      setIsMuted(true);
+    });
   };
 
   const toggleSound = () => {
-    if (isMuted || !isPlaying) {
-      setIsMuted(false);
-      startAmbientMusic();
+    if (isPlaying && !isMuted) {
+      pauseMusic();
     } else {
-      setIsMuted(true);
-      stopAmbientMusic();
+      playMusic();
     }
   };
 
-  // Listen to user first interaction
   useEffect(() => {
-    const handleFirstInteraction = () => {
-      if (!isMuted && !isPlaying) {
-        startAmbientMusic();
-      }
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('scroll', handleFirstInteraction);
-    };
+    // Attempt auto-start or attach interaction listener
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0;
+      
+      const tryAutoPlay = () => {
+        audio.play()
+          .then(() => {
+            setIsPlaying(true);
+            fadeVolume(0, targetVolume, 2000);
+          })
+          .catch(() => {
+            // Wait for first touch/click/scroll
+            const handleUserInteract = () => {
+              playMusic();
+              ['click', 'touchstart', 'scroll', 'keydown'].forEach((evt) =>
+                window.removeEventListener(evt, handleUserInteract)
+              );
+            };
 
-    window.addEventListener('click', handleFirstInteraction, { once: true });
-    window.addEventListener('scroll', handleFirstInteraction, { once: true });
+            ['click', 'touchstart', 'scroll', 'keydown'].forEach((evt) =>
+              window.addEventListener(evt, handleUserInteract, { once: true, passive: true })
+            );
+          });
+      };
+
+      tryAutoPlay();
+    }
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (audioCtxRef.current) {
-        audioCtxRef.current.close().catch(() => {});
-      }
+      if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
     };
-  }, [isMuted]);
+  }, []);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <button
-        onClick={toggleSound}
-        className="group relative flex items-center gap-3 px-4 py-2.5 rounded-full bg-noir-800/80 backdrop-blur-md border border-gold-500/30 text-gold-300 hover:text-gold-200 hover:border-gold-400/60 shadow-lg shadow-black/60 transition-all duration-300 hover:scale-105"
-        title={isPlaying && !isMuted ? "Mute Ambient Sitar & Drone" : "Play Wedding Ambient Music"}
-      >
-        <div className="relative flex items-center justify-center w-5 h-5">
-          {isPlaying && !isMuted ? (
-            <div className="flex items-end gap-[3px] h-3.5">
-              <span className="w-[2px] bg-gold-400 rounded-full animate-[pulse_0.8s_ease-in-out_infinite] h-full" />
-              <span className="w-[2px] bg-gold-300 rounded-full animate-[pulse_1.1s_ease-in-out_infinite_0.2s] h-2/3" />
-              <span className="w-[2px] bg-gold-400 rounded-full animate-[pulse_0.9s_ease-in-out_infinite_0.4s] h-4/5" />
-            </div>
-          ) : (
-            <VolumeX className="w-4 h-4 text-gold-400/60" />
-          )}
-        </div>
-        <span className="text-xs uppercase tracking-widest font-cinzel font-medium text-gold-300/90 group-hover:text-gold-200">
-          {isPlaying && !isMuted ? "Sound On" : "Music"}
-        </span>
-      </button>
-    </div>
+    <>
+      {/* Hidden Audio Element with music.mp3 */}
+      <audio
+        ref={audioRef}
+        src="/music.mp3"
+        loop
+        preload="auto"
+        className="hidden"
+      />
+
+      {/* Floating Minimal Luxury Sound Control */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button
+          onClick={toggleSound}
+          className={`group relative flex items-center gap-2.5 px-4 py-2 rounded-full border backdrop-blur-md transition-all duration-300 shadow-xl ${
+            isPlaying && !isMuted
+              ? 'bg-noir-900/90 border-gold-400/60 text-gold-200 shadow-gold-500/10 scale-105'
+              : 'bg-noir-900/70 border-gold-500/30 text-gold-300/70 hover:text-gold-200 hover:border-gold-400/50'
+          }`}
+          title={isPlaying && !isMuted ? "Mute Wedding Music (music.mp3)" : "Play Wedding Music (music.mp3)"}
+          aria-label={isPlaying && !isMuted ? "Sound On" : "Sound Off"}
+        >
+          {/* Animated Waveform Equalizer */}
+          <div className="relative flex items-center justify-center w-4 h-4">
+            {isPlaying && !isMuted ? (
+              <div className="flex items-end gap-[2.5px] h-3.5">
+                <span className="w-[2px] bg-gold-400 rounded-full animate-[pulse_0.7s_ease-in-out_infinite] h-full" />
+                <span className="w-[2px] bg-gold-300 rounded-full animate-[pulse_1.0s_ease-in-out_infinite_0.2s] h-3/5" />
+                <span className="w-[2px] bg-gold-400 rounded-full animate-[pulse_0.85s_ease-in-out_infinite_0.4s] h-4/5" />
+              </div>
+            ) : (
+              <VolumeX className="w-3.5 h-3.5 text-gold-400/60" />
+            )}
+          </div>
+
+          <span className="text-[11px] font-cinzel tracking-[0.2em] uppercase font-medium">
+            {isPlaying && !isMuted ? "SOUND ON" : "SOUND OFF"}
+          </span>
+        </button>
+      </div>
+    </>
   );
 }
