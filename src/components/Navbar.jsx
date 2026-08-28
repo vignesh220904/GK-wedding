@@ -28,7 +28,6 @@ export default function Navbar({ onOpenWishes }) {
     { name: 'STORY', href: '#story' },
     { name: 'COUPLE', href: '#couple' },
     { name: 'INVITATION', href: '#invitation' },
-    { name: 'WEDDING WORLD', href: '#wedding-world' },
     { name: 'DETAILS', href: '#details' },
   ];
 
@@ -81,7 +80,7 @@ export default function Navbar({ onOpenWishes }) {
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+          <nav className="hidden md:flex items-center gap-7 lg:gap-9">
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -99,7 +98,7 @@ export default function Navbar({ onOpenWishes }) {
           <div className="flex items-center gap-2.5">
             <button
               onClick={onOpenWishes}
-              className="relative px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-gold-400/40 bg-gold-500/10 hover:bg-gold-500/20 text-gold-300 hover:text-gold-200 text-xs font-cinzel tracking-wider flex items-center gap-1.5 shadow-md"
+              className="relative px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full border border-gold-400/40 bg-gold-500/10 hover:bg-gold-500/20 text-gold-300 hover:text-gold-200 text-xs font-cinzel tracking-wider flex items-center gap-1.5 shadow-md"
             >
               <Heart className="w-3.5 h-3.5 text-gold-400 fill-gold-400/30" />
               <span className="hidden sm:inline">Send Blessings</span>
@@ -137,7 +136,7 @@ export default function Navbar({ onOpenWishes }) {
                 <a
                   href={link.href}
                   onClick={(e) => scrollToSection(e, link.href)}
-                  className="block text-base font-cinzel tracking-[0.2em] text-ivory/90 hover:text-gold-300 py-2 border-b border-gold-500/10"
+                  className="block text-base font-cinzel tracking-[0.2em] text-ivory/90 hover:text-gold-300 py-2.5 border-b border-gold-500/10"
                 >
                   {link.name}
                 </a>

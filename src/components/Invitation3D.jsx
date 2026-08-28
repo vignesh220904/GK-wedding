@@ -1,25 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Clock, ExternalLink, Sparkles, Download, Check } from 'lucide-react';
-import { getGoogleCalendarUrl, downloadIcsFile } from '../utils/calendar';
+import { ExternalLink, Sparkles } from 'lucide-react';
 
 export default function Invitation3D() {
   const [isOpen, setIsOpen] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyVenue = () => {
-    navigator.clipboard.writeText("JVS Sakthi Mahal, Tindivanam - 604001, Tamil Nadu");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
 
   return (
     <section
       id="invitation"
-      className="relative min-h-[90vh] md:min-h-screen w-full py-20 md:py-28 px-4 sm:px-6 md:px-12 bg-gradient-to-b from-[#0A0806] via-[#15100C] to-[#0D0B09] overflow-hidden flex flex-col justify-center items-center"
+      className="relative min-h-[85vh] md:min-h-screen w-full py-20 md:py-28 px-4 sm:px-6 md:px-12 bg-gradient-to-b from-[#0A0806] via-[#15100C] to-[#0D0B09] overflow-hidden flex flex-col justify-center items-center"
     >
-      <div className="max-w-6xl mx-auto w-full relative z-10 space-y-10 text-center">
+      <div className="max-w-6xl mx-auto w-full relative z-10 space-y-8 sm:space-y-10 text-center">
         
         {/* Section Header */}
         <div className="space-y-2 sm:space-y-3">
@@ -38,7 +30,7 @@ export default function Invitation3D() {
         </div>
 
         {/* Physical Envelope & Card Experience */}
-        <div className="relative flex flex-col items-center justify-center min-h-[420px] sm:min-h-[500px] w-full">
+        <div className="relative flex flex-col items-center justify-center min-h-[380px] sm:min-h-[460px] w-full">
           
           {!isOpen ? (
             /* Closed Luxury Envelope */
@@ -115,93 +107,6 @@ export default function Invitation3D() {
               </div>
             </motion.div>
           )}
-
-        </div>
-
-        {/* Timetable & Venue Summary Card */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto pt-4 text-left">
-          
-          {/* Reception Card */}
-          <div className="luxury-card p-5 sm:p-6 rounded-2xl space-y-3">
-            <div>
-              <span className="text-[9px] font-cinzel tracking-[0.25em] uppercase text-gold-400 block font-semibold">
-                Evening Gala
-              </span>
-              <h3 className="font-cinzel text-lg font-bold text-ivory">
-                RECEPTION
-              </h3>
-            </div>
-            <div className="space-y-1 text-xs text-ivory/80 font-sans">
-              <p className="font-semibold text-gold-200">06 September 2026</p>
-              <p className="flex items-center gap-1.5 text-ivory/70">
-                <Clock className="w-3.5 h-3.5 text-gold-400" />
-                From 7:00 PM Onwards
-              </p>
-            </div>
-            <button
-              onClick={() => downloadIcsFile('reception')}
-              className="text-[11px] font-cinzel tracking-wider text-gold-300 hover:text-gold-100 flex items-center gap-1 pt-1"
-            >
-              <Download className="w-3 h-3" /> Add to Calendar
-            </button>
-          </div>
-
-          {/* Wedding Muhurtham Card */}
-          <div className="luxury-card p-5 sm:p-6 rounded-2xl space-y-3 border-gold-400/50 bg-gradient-to-b from-[#221A11] to-noir-900">
-            <div>
-              <span className="text-[9px] font-cinzel tracking-[0.25em] uppercase text-gold-400 block font-semibold">
-                Auspicious Muhurtham
-              </span>
-              <h3 className="font-cinzel text-lg font-bold text-gold-gradient">
-                WEDDING
-              </h3>
-            </div>
-            <div className="space-y-1 text-xs text-ivory/80 font-sans">
-              <p className="font-semibold text-gold-200">07 September 2026</p>
-              <p className="flex items-center gap-1.5 text-ivory/70">
-                <Clock className="w-3.5 h-3.5 text-gold-400" />
-                6:00 AM – 7:30 AM
-              </p>
-            </div>
-            <button
-              onClick={() => downloadIcsFile('wedding')}
-              className="text-[11px] font-cinzel tracking-wider text-gold-300 hover:text-gold-100 flex items-center gap-1 pt-1 font-semibold"
-            >
-              <Download className="w-3 h-3" /> Add to Calendar
-            </button>
-          </div>
-
-          {/* Venue Card */}
-          <div className="luxury-card p-5 sm:p-6 rounded-2xl space-y-3 sm:col-span-2 md:col-span-1">
-            <div>
-              <span className="text-[9px] font-cinzel tracking-[0.25em] uppercase text-gold-400 block font-semibold">
-                Sacred Location
-              </span>
-              <h3 className="font-cinzel text-lg font-bold text-ivory">
-                VENUE
-              </h3>
-            </div>
-            <div className="space-y-0.5 text-xs text-ivory/80 font-sans">
-              <p className="font-semibold text-gold-200">JVS SAKTHI MAHAL</p>
-              <p className="text-ivory/70">Tindivanam – 604001</p>
-            </div>
-            <div className="flex items-center gap-3 pt-1">
-              <a
-                href="https://maps.google.com/?q=JVS+Sakthi+Mahal+Tindivanam"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[11px] font-cinzel tracking-wider text-gold-300 hover:text-gold-100 flex items-center gap-1"
-              >
-                <MapPin className="w-3 h-3" /> Google Maps
-              </a>
-              <button
-                onClick={handleCopyVenue}
-                className="text-[11px] font-cinzel tracking-wider text-ivory/60 hover:text-gold-300"
-              >
-                {copied ? <span className="text-emerald-400">Copied</span> : "Copy"}
-              </button>
-            </div>
-          </div>
 
         </div>
 

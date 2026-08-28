@@ -7,7 +7,6 @@ import HeroSection from './components/HeroSection';
 import CoupleSection from './components/CoupleSection';
 import StorySection from './components/StorySection';
 import Invitation3D from './components/Invitation3D';
-import WeddingWorld from './components/WeddingWorld';
 import CoupleEntrance from './components/CoupleEntrance';
 import WeddingDetails from './components/WeddingDetails';
 import FinalHero from './components/FinalHero';
@@ -61,16 +60,13 @@ export default function App() {
         {/* Section 05: 04 WEDDING INVITATION (GK6 3D Envelope) */}
         <Invitation3D />
 
-        {/* Section 06: 05 THE WEDDING WORLD (South Indian Mandapam) */}
-        <WeddingWorld />
-
-        {/* Section 07: 06 FOREVER BEGINS (Couple Entrance GK4) */}
+        {/* Section 06: 05 FOREVER BEGINS (Couple Entrance GK4) */}
         <CoupleEntrance />
 
-        {/* Section 08: 07 WEDDING DETAILS (Stationery Cards) */}
+        {/* Section 07: 06 WEDDING DETAILS (Stationery Cards) */}
         <WeddingDetails />
 
-        {/* Section 09: 08 FINAL MASTERPIECE (Grand Sunset Finale & Eternal Diya) */}
+        {/* Section 08: 07 FINAL MASTERPIECE (Grand Sunset Finale & Eternal Diya) */}
         <FinalHero />
         <EndingSection onOpenWishes={() => setWishesOpen(true)} />
       </main>
