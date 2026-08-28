@@ -159,7 +159,7 @@ export default function GuestWishesModal({ isOpen, onClose }) {
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#25D366] via-emerald-500 to-[#128C7E] hover:brightness-110 text-white font-cinzel text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.01]"
               >
                 <MessageCircle className="w-4 h-4 fill-white text-emerald-600" />
-                Send Blessing to WhatsApp (9499912508)
+                Send Blessing to WhatsApp
               </button>
 
               {submitted && (
