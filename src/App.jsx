@@ -22,20 +22,22 @@ export default function App() {
   const [wishesOpen, setWishesOpen] = useState(false);
   const lenisRef = useRef(null);
 
-  // Initialize Lenis Smooth Scrolling for 60fps Awwwards-grade experience
+  // Initialize Lenis ONLY on Desktop. Mobile uses 100% native 120fps hardware momentum scrolling.
   useEffect(() => {
-    // Check if user prefers reduced motion
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 768;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+
+    if (isTouch || prefersReducedMotion) {
+      return; // Use native mobile hardware acceleration
+    }
 
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Smooth exponential ease
+      duration: 1.0,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -8 * t)),
       orientation: 'vertical',
-      gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 0, // Never hijack touch
     });
 
     lenisRef.current = lenis;
@@ -57,7 +59,7 @@ export default function App() {
     const heroEl = document.getElementById('hero');
     if (heroEl) {
       if (lenisRef.current) {
-        lenisRef.current.scrollTo(heroEl, { offset: -40, duration: 1.4 });
+        lenisRef.current.scrollTo(heroEl, { offset: -40, duration: 1.0 });
       } else {
         heroEl.scrollIntoView({ behavior: 'smooth' });
       }
@@ -65,7 +67,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-noir-900 text-ivory overflow-x-hidden selection:bg-gold-500 selection:text-noir-900">
+    <div className="relative min-h-screen bg-noir-900 text-ivory overflow-x-hidden selection:bg-gold-500 selection:text-noir-900 overscroll-none">
       {/* Luxury Custom Cursor (Desktop Only) */}
       <CustomCursor />
 

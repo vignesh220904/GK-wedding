@@ -4,15 +4,14 @@ import { motion } from 'framer-motion';
 export default function CustomCursor() {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [isHovered, setIsHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    // Check if device is touch or small viewport
-    const checkMobile = () => {
-      setIsMobile(window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    // Only enable on true mouse pointer desktop
+    const isDesktop = window.matchMedia('(pointer: fine)').matches && window.innerWidth >= 1024;
+    if (!isDesktop) return;
+
+    setEnabled(true);
 
     const updateMouse = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -25,8 +24,7 @@ export default function CustomCursor() {
         target.tagName === 'A' ||
         target.closest('button') ||
         target.closest('a') ||
-        target.getAttribute('role') === 'button' ||
-        target.classList.contains('cursor-pointer')
+        target.getAttribute('role') === 'button'
       ) {
         setIsHovered(true);
       } else {
@@ -34,17 +32,16 @@ export default function CustomCursor() {
       }
     };
 
-    window.addEventListener('mousemove', updateMouse);
-    window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mousemove', updateMouse, { passive: true });
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener('mousemove', updateMouse);
       window.removeEventListener('mouseover', handleMouseOver);
-      window.removeEventListener('resize', checkMobile);
     };
   }, []);
 
-  if (isMobile) return null;
+  if (!enabled) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
@@ -52,34 +49,32 @@ export default function CustomCursor() {
       <motion.div
         className="absolute rounded-full border border-gold-400/60 pointer-events-none"
         animate={{
-          x: mousePosition.x - (isHovered ? 28 : 16),
-          y: mousePosition.y - (isHovered ? 28 : 16),
-          width: isHovered ? 56 : 32,
-          height: isHovered ? 56 : 32,
-          borderColor: isHovered ? 'rgba(245, 236, 211, 0.9)' : 'rgba(200, 157, 75, 0.5)',
-          backgroundColor: isHovered ? 'rgba(200, 157, 75, 0.08)' : 'rgba(200, 157, 75, 0)',
+          x: mousePosition.x - (isHovered ? 24 : 14),
+          y: mousePosition.y - (isHovered ? 24 : 14),
+          width: isHovered ? 48 : 28,
+          height: isHovered ? 48 : 28,
         }}
         transition={{
           type: 'spring',
-          damping: 24,
-          stiffness: 280,
-          mass: 0.4,
+          damping: 30,
+          stiffness: 350,
+          mass: 0.3,
         }}
       />
       {/* Center Golden Dot */}
       <motion.div
-        className="absolute rounded-full bg-gradient-to-r from-gold-300 to-gold-500 pointer-events-none shadow-[0_0_8px_rgba(212,170,82,0.8)]"
+        className="absolute rounded-full bg-gold-400 pointer-events-none"
         animate={{
-          x: mousePosition.x - 3,
-          y: mousePosition.y - 3,
-          scale: isHovered ? 1.5 : 1,
+          x: mousePosition.x - 2.5,
+          y: mousePosition.y - 2.5,
+          scale: isHovered ? 1.4 : 1,
         }}
         transition={{
           type: 'spring',
-          damping: 35,
-          stiffness: 450,
+          damping: 40,
+          stiffness: 500,
         }}
-        style={{ width: 6, height: 6 }}
+        style={{ width: 5, height: 5 }}
       />
     </div>
   );

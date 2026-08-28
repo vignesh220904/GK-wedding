@@ -44,27 +44,6 @@
   --noir: #0D0B09;
 }
 
-/* Lenis Smooth Scroll Core Styles */
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-smooth iframe {
-  pointer-events: none;
-}
-
 html {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: #0D0B09;
@@ -72,21 +51,25 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
-/* Custom luxury scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #0D0B09;
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #A98135, #C89D4B, #8A6726);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #DFC07B;
+/* Custom luxury scrollbar (Desktop) */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0D0B09;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #A98135, #C89D4B, #8A6726);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #DFC07B;
+  }
 }
 
 /* Typography Helpers */
@@ -107,17 +90,12 @@ html {
   font-family: 'Great Vibes', cursive;
 }
 
-/* Gold Gradient Accents */
+/* Gold Gradient Accents (GPU Fast) */
 .text-gold-gradient {
   background: linear-gradient(135deg, #FFF6DD 0%, #DFC07B 40%, #C89D4B 70%, #A98135 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.text-gold-subtle {
-  background: linear-gradient(135deg, #FFFFFF 0%, #EBD8A6 60%, #C89D4B 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .gold-border {
@@ -126,69 +104,50 @@ html {
 
 .gold-border-glow {
   border: 1px solid rgba(223, 192, 123, 0.45);
-  box-shadow: 0 0 25px rgba(200, 157, 75, 0.15), inset 0 0 15px rgba(200, 157, 75, 0.08);
+  box-shadow: 0 0 20px rgba(200, 157, 75, 0.12);
 }
 
-/* Glassmorphism Luxury Cards with GPU optimization */
+/* High-Performance Cards */
 .luxury-card {
-  background: linear-gradient(145deg, rgba(26, 20, 15, 0.8) 0%, rgba(13, 11, 9, 0.92) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #15110D;
   border: 1px solid rgba(223, 192, 123, 0.22);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   transform: translateZ(0);
 }
 
-/* Diya Keyframe */
+@media (min-width: 768px) {
+  .luxury-card {
+    background: linear-gradient(145deg, rgba(26, 20, 15, 0.85) 0%, rgba(13, 11, 9, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Lightweight Diya Animation */
 @keyframes flameFlicker {
   0%, 100% {
     transform: scale(1) rotate(-1deg);
   }
-  25% {
-    transform: scale(1.05, 0.95) rotate(1.2deg);
-  }
   50% {
-    transform: scale(0.97, 1.04) rotate(-0.5deg);
-  }
-  75% {
-    transform: scale(1.03, 0.98) rotate(0.8deg);
+    transform: scale(1.05, 0.95) rotate(1deg);
   }
 }
 
 .animate-flame {
-  animation: flameFlicker 2.8s ease-in-out infinite;
+  animation: flameFlicker 2.5s ease-in-out infinite;
   transform-origin: center bottom;
   will-change: transform;
 }
 
-@keyframes spinSlow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Off-screen performance boost */
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
 }
 
-.animate-spin-slow {
-  animation: spinSlow 35s linear infinite;
-  will-change: transform;
-}
-
-/* Media Query: prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Mobile specific lightweight enhancements */
-@media (max-width: 768px) {
-  .luxury-card {
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-  }
+/* Images render optimization */
+img {
+  content-visibility: auto;
+  transform: translateZ(0);
 }
