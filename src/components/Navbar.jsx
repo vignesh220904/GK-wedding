@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Heart } from 'lucide-react';
 
-export default function Navbar({ onOpenWishes, lenisRef }) {
+export default function Navbar({ onOpenWishes }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -13,7 +13,7 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
       const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
       setScrollProgress(progress);
 
-      if (scrollY > 40) {
+      if (scrollY > 30) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -37,17 +37,13 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
     setMobileMenuOpen(false);
     const element = document.querySelector(href);
     if (element) {
-      if (lenisRef && lenisRef.current) {
-        lenisRef.current.scrollTo(element, { offset: -60, duration: 1.2 });
-      } else {
-        const topOffset = 60;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - topOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
+      const topOffset = 60;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - topOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -56,19 +52,19 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
       {/* Top Gold Scroll Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-[2.5px] z-50 bg-noir-900/40 pointer-events-none">
         <div
-          className="h-full bg-gradient-to-r from-gold-500 via-gold-300 to-amber-200 transition-all duration-150 ease-out"
+          className="h-full bg-gradient-to-r from-gold-500 via-gold-300 to-amber-200"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? 'bg-noir-900/85 backdrop-blur-md border-b border-gold-500/15 py-3 shadow-xl shadow-black/50'
-            : 'bg-gradient-to-b from-noir-900/80 via-noir-900/20 to-transparent py-5'
+            ? 'bg-noir-900/90 backdrop-blur-md border-b border-gold-500/15 py-3 shadow-xl'
+            : 'bg-gradient-to-b from-noir-900/80 via-noir-900/20 to-transparent py-4'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between">
           
           {/* Brand Logo */}
           <a
@@ -76,7 +72,7 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
             onClick={(e) => scrollToSection(e, '#hero')}
             className="flex items-center gap-2 group cursor-pointer"
           >
-            <span className="font-cinzel text-lg sm:text-xl md:text-2xl font-bold tracking-[0.25em] text-gold-gradient transition-all duration-300 group-hover:tracking-[0.3em]">
+            <span className="font-cinzel text-lg sm:text-xl md:text-2xl font-bold tracking-[0.25em] text-gold-gradient">
               FOREVER
             </span>
             <span className="text-[10px] uppercase font-sans tracking-widest text-gold-300/60 hidden sm:inline-block border-l border-gold-500/30 pl-2.5">
@@ -100,10 +96,10 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
           </nav>
 
           {/* Header Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={onOpenWishes}
-              className="relative px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full border border-gold-400/40 bg-gold-500/10 hover:bg-gold-500/20 text-gold-300 hover:text-gold-200 text-xs font-cinzel tracking-wider flex items-center gap-1.5 transition-all duration-300 shadow-[0_0_15px_rgba(200,157,75,0.1)]"
+              className="relative px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-gold-400/40 bg-gold-500/10 hover:bg-gold-500/20 text-gold-300 hover:text-gold-200 text-xs font-cinzel tracking-wider flex items-center gap-1.5 shadow-md"
             >
               <Heart className="w-3.5 h-3.5 text-gold-400 fill-gold-400/30" />
               <span className="hidden sm:inline">Send Blessings</span>
@@ -113,8 +109,8 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-gold-300 hover:text-gold-100 transition-colors"
-              aria-label="Toggle Navigation Menu"
+              className="md:hidden p-2 text-gold-300 hover:text-gold-100"
+              aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -124,10 +120,10 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-noir-900/98 backdrop-blur-xl flex flex-col justify-center items-center px-6 transition-all duration-300 md:hidden">
+        <div className="fixed inset-0 z-40 bg-noir-900/98 backdrop-blur-xl flex flex-col justify-center items-center px-6 md:hidden">
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="absolute top-6 right-6 p-2 text-gold-300 hover:text-white"
+            className="absolute top-5 right-5 p-2 text-gold-300"
           >
             <X className="w-6 h-6" />
           </button>
@@ -141,13 +137,13 @@ export default function Navbar({ onOpenWishes, lenisRef }) {
                 <a
                   href={link.href}
                   onClick={(e) => scrollToSection(e, link.href)}
-                  className="block text-base font-cinzel tracking-[0.25em] text-ivory/90 hover:text-gold-300 py-2.5 transition-colors border-b border-gold-500/10"
+                  className="block text-base font-cinzel tracking-[0.2em] text-ivory/90 hover:text-gold-300 py-2 border-b border-gold-500/10"
                 >
                   {link.name}
                 </a>
               </div>
             ))}
-            <div className="pt-6">
+            <div className="pt-4">
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
